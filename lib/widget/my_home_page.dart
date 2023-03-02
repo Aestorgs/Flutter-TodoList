@@ -57,12 +57,15 @@ List<Task> taskList = [];
         blurRadius: 5
       )
     ]),
-    child: Column(
+    child: 
+      ExpansionTile(
+      title: Text(category.name.toUpperCase()),
       children: 
-        internalContainerListView
+     _drawTask(category)
+
     ),
-   )
-  );
+    )
+   );
   }
  return result;
  }
