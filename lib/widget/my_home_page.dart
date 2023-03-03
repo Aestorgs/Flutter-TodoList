@@ -1,3 +1,4 @@
+import 'package:apptodolist/widget/add_or_update_task.dart';
 import 'package:flutter/material.dart';
 
 import '../class/todo_list.dart';
@@ -36,6 +37,24 @@ List<Task> taskList = [];
       }
       ),
       title: Text(task.name),
+      trailing:
+      Wrap(
+      children:  <Widget>[
+    IconButton(
+       icon: const Icon(Icons.border_color),
+       onPressed: () => _addOrUpdateTask(task)
+    ),
+     IconButton(
+       icon: const Icon(Icons.delete),
+       onPressed: (){
+        setState(() {
+          taskList.remove(task);
+        });
+       },
+    ),
+      ]
+    )
+
     ) ).toList();
   }
 
@@ -62,12 +81,25 @@ List<Task> taskList = [];
       title: Text(category.name.toUpperCase()),
       children: 
      _drawTask(category)
-
     ),
-    )
+    ),
    );
   }
  return result;
+ }
+
+ void _addOrUpdateTask([Task? task]) async{
+    Task? newTask =  await showDialog(context: context, builder: (_) => AddOrUpdateTaskPage(task : task)
+    );
+    if (newTask != null) {
+      setState(() {
+        if (task != null) {
+          task.fromTask(newTask);
+        } else {
+          taskList.add(newTask);
+        }
+      });
+    }
  }
   @override
   Widget build(BuildContext context) {
@@ -79,6 +111,10 @@ List<Task> taskList = [];
       body: ListView(
         children: _drawTodoList(),
       ),
+      floatingActionButton:  FloatingActionButton(
+        onPressed: () =>  _addOrUpdateTask(),
+        child: const Icon(Icons.add),
+      ), // Thi
     );
   }
 }
