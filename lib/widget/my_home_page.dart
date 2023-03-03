@@ -1,5 +1,7 @@
+import 'package:apptodolist/models/tasks_model.dart';
 import 'package:apptodolist/widget/add_or_update_task.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import '../class/todo_list.dart';
 
@@ -11,24 +13,16 @@ class MyHomePage extends StatefulWidget{
 }
 
 class _MyHomePageState extends State<MyHomePage>{
+  late TasksModel model;
 
-List<Task> taskList = [];
 @override
   void initState(){
-  taskList.add(Shopping("Kinder Bueno"));
-  taskList.add(Sport("Triathlon"));
-  taskList.add(Shopping("KitKat"));
-  taskList.add(Sport("Trail"));
-  taskList.add(Shopping("Nesquik"));
-  taskList.add(Shopping("Mars"));
-  taskList.add(Shopping("Twix"));
-  taskList.add(Sport("Marathon"));
-  taskList.add(Shopping("Bounty"));
+  model = context.read<TasksModel>();
    super.initState();
    }
 
   List<Widget> _drawTask(CategoryEnum category){
-    return  taskList.where((el) => el.category == category) .map((task) => ListTile(
+    return  model.tasksList.where((el) => el.category == category) .map((task) => ListTile(
       leading: Checkbox(value: task.done,
       onChanged: (bool ? value){
         setState(() {
@@ -47,9 +41,9 @@ List<Task> taskList = [];
      IconButton(
        icon: const Icon(Icons.delete),
        onPressed: (){
-        setState(() {
-          taskList.remove(task);
-        });
+       // setState(() {
+          model.delete(task);
+       // });
        },
     ),
       ]
@@ -92,18 +86,18 @@ List<Task> taskList = [];
     Task? newTask =  await showDialog(context: context, builder: (_) => AddOrUpdateTaskPage(task : task)
     );
     if (newTask != null) {
-      setState(() {
+     // setState(() {
         if (task != null) {
-          task.fromTask(newTask);
+          model.update(task, newTask);
         } else {
-          taskList.add(newTask);
+          model.add(newTask);
         }
-      });
+      //});
     }
  }
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+        return Scaffold(
       appBar: AppBar(
         centerTitle: true,
         title: Text(widget.title),
@@ -115,6 +109,6 @@ List<Task> taskList = [];
         onPressed: () =>  _addOrUpdateTask(),
         child: const Icon(Icons.add),
       ), // Thi
-    );
+      );
   }
 }
